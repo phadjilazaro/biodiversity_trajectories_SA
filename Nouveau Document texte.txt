@@ -1,0 +1,30 @@
+Sys.setenv(AWS_ACCESS_KEY_ID = UX3YKNDRAU522RCOWREJ,
+           AWS_SECRET_ACCESS_KEY = eOpu+Ea8XDZ1uBnzmIGzRvEm65L6abPlEoCVwswT,
+           AWS_DEFAULT_REGION = us-east-1,
+           AWS_SESSION_TOKEN = eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJhY2Nlc3NLZXkiOiJVWDNZS05EUkFVNTIyUkNPV1JFSiIsImFsbG93ZWQtb3JpZ2lucyI6WyIqIl0sImF1ZCI6WyJtaW5pby1kYXRhbm9kZSIsIm9ueXhpYSIsImFjY291bnQiXSwiYXV0aF90aW1lIjoxNzUzMTA5MzYzLCJhenAiOiJvbnl4aWEiLCJlbWFpbCI6ImhhZGppbGF6YXJvcEBhZmQuZnIiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwiZXhwIjoxNzUzNzgyMjc2LCJmYW1pbHlfbmFtZSI6IkhhZGppLUxhemFybyIsImdpdmVuX25hbWUiOiJQYXVsIiwiZ3JvdXBzIjpbIlVTRVJfT05ZWElBIiwiZXN0ZWVtIl0sImlhdCI6MTc1MzE3NzQ3NiwiaXNzIjoiaHR0cHM6Ly9hdXRoLmxhYi5zc3BjbG91ZC5mci9hdXRoL3JlYWxtcy9zc3BjbG91ZCIsImp0aSI6Im9ucnRydDpkYWIxZTc3Ni00OWQ5LTQ5NzMtYTg3ZC1hZDVkODNmNDUwNDMiLCJsb2NhbGUiOiJmciIsIm5hbWUiOiJQYXVsIEhhZGppLUxhemFybyIsInBvbGljeSI6InN0c29ubHkiLCJwcmVmZXJyZWRfdXNlcm5hbWUiOiJoYWRqaWxhemFyb3AiLCJyZWFsbV9hY2Nlc3MiOnsicm9sZXMiOlsib2ZmbGluZV9hY2Nlc3MiLCJ1bWFfYXV0aG9yaXphdGlvbiIsImRlZmF1bHQtcm9sZXMtc3NwY2xvdWQiXX0sInJlc291cmNlX2FjY2VzcyI6eyJhY2NvdW50Ijp7InJvbGVzIjpbIm1hbmFnZS1hY2NvdW50IiwibWFuYWdlLWFjY291bnQtbGlua3MiLCJ2aWV3LXByb2ZpbGUiXX19LCJyb2xlcyI6WyJvZmZsaW5lX2FjY2VzcyIsInVtYV9hdXRob3JpemF0aW9uIiwiZGVmYXVsdC1yb2xlcy1zc3BjbG91ZCJdLCJzY29wZSI6Im9wZW5pZCBwcm9maWxlIGdyb3VwcyBlbWFpbCIsInNpZCI6Ijk4M2NmNmI0LWFjZjAtNDgzZi1hYjE3LTBmM2U5MmFiM2YxYSIsInN1YiI6ImVhOTkxOGE1LThkY2EtNDI4OC1iMjBkLTUxZjk0OWZmYWNiZiIsInR5cCI6IkJlYXJlciJ9.XGHxVHsbhHWEbrGDf-HwfBzBi9fwEY1p0-e-xO7O-ajtw8BQLcX9mXUTDbcnJmCeV-GlJgYmfkTFF3EqXgR8eA,
+           AWS_S3_ENDPOINT= minio.lab.sspcloud.fr)
+
+library(aws.s3)
+
+
+h7csv_raw - s3read_using(FUN = data.tablefread,
+                       object = hex7_FTE_Industry5d.csv,
+                       bucket = hadjilazarop, opts = list(region = ))
+
+library(sf)
+library(dplyr) 
+
+st_read(s3hadjilazaropUberH3_7.shp)
+
+# Sys.setenv(SHAPE_RESTORE_SHX=YES)
+h7sf_raw - s3read_using(FUN = sfst_read,
+                          object = UberH3_7.shp,
+                          bucket = hadjilazarop, opts = list(region = ))
+
+# 2)  Clean  convert the FTE column so it is numerically
+emp_df - h7csv_raw %% 
+  mutate(FTE_num = case_when(
+    FTE == 10           ~ 5,                    # - option A use 5
+    is.na(FTE)             ~ NA_real_,
+    TRUE                   ~ as.numeric(FTE)
+  ))
