@@ -1,18 +1,9 @@
-<<<<<<< HEAD
 # install.packages("terra")
 library(terra)
 library(aws.s3)
 library(sf)
 library(tidyverse)
 library(dplyr)
-
-
-=======
-install.packages("terra")
-library(terra)
-
-process_tiffs(bla)
->>>>>>> 1922ccb3e021ae72cbe221b316ed503480830e4d
 
 # Read tiff. of SANLC 
 SANLCdata <- s3read_using(FUN = rast,
@@ -36,8 +27,6 @@ shp_path <- file.path(tmp_dir, "MDB_Local_Municipal_Boundary_2018.shp")
 municipalities_sf <- st_read(shp_path)
 
 
-
-<<<<<<< HEAD
 # df_muni_FTE: prend en colonne les noms des municipalités (212) et en ligne les nombres d'industries (420)
 # Read the data file with FTE figures by hex7 id number 
 municipal_csv_raw <- s3read_using(FUN = read.csv,
@@ -50,9 +39,9 @@ municipal_csv_raw <- municipal_csv_raw %>%
   mutate(
     FTE = as.numeric(ifelse(FTE == "<10", 5, FTE))  # replace "<10" with 5
   )
-=======
+
+
 # build df_muni_FTE qui prend en colonne les noms des municipalités (212) et en ligne les nombres d'industries (420)
->>>>>>> 1922ccb3e021ae72cbe221b316ed503480830e4d
 df_muni_FTE <- municipal_csv_raw %>% 
   filter(TaxYear == 2023) %>% 
   select(CAT_B, SIC7_4d, FTE) %>% 
@@ -65,22 +54,16 @@ df_muni_FTE <- municipal_csv_raw %>%
     values_fill = 0       # remplit les manquants par 0
   )
 
-<<<<<<< HEAD
 # df_muni_pixel_LC: the names of municipalities in columns and the 73 land cover map categories in rows : each cell indicating the number of pixel of each LC categories in each municipality  
 municipalities_sf <- st_transform(municipalities_sf, crs(SANLCdata))
-zonal_counts <- terra::extract(SANLCdata, municipalities_sf, fun=NULL, freq=TRUE)
-# SAVE zonal_counts !!!!! 
-  
-writeRaster(SANLCdata, "SANLCdata_tmp.tif", overwrite = TRUE)
-# Reopen from that file (this creates a stable SpatRaster)
-SANLCdata <- rast("SANLCdata_tmp.tif")
 
-# 4. Extract counts of each land-cover class per municipality
-terraOptions(tempdir = "/home/onyxia/work/terra_tmp", memfrac = 0.7)
-zonal_counts <- extract(SANLCdata, municipalities_sf, fun = NULL, freq = TRUE, touches = TRUE, exact = FALSE, cores = 8)
+municipalities_sf$ID <- 1:nrow(municipalities_sf)
+muni_rast <- terra::rasterize(vect(municipalities_sf), SANLCdata, field = "ID")
+tab <- terra::crosstab(c(muni_rast, SANLCdata), long = TRUE)
 
 
 
+#################################################"
 
 Pour chaque pixel
 - trouve la municipalité dans laquelle il est localisé: municipality_name
